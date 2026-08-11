@@ -1,7 +1,8 @@
-import Sidebar from "@/components/Sidebar";
 import DashboardLayout from "@/Layouts/DashboardLayout";
+import { usePage } from "@inertiajs/react";
 
 export default function Teachers() {
+    const { user_name } = usePage().props;
     return (
         <DashboardLayout>
             <main className="flex-1 overflow-y-auto bg-[#f1f5f9]">
@@ -13,7 +14,7 @@ export default function Teachers() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-slate-500">
-                                        Total Teachers
+                                        The user name is {user_name}
                                     </p>
                                     <p className="text-2xl font-bold text-slate-800 mt-1">
                                         8

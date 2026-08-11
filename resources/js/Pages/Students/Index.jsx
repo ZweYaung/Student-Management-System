@@ -1,7 +1,35 @@
-import Sidebar from "@/components/Sidebar";
+import { Link, usePage, router } from "@inertiajs/react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
+import { useState } from "react";
+import AddStudentModal from "@/Components/AddStudentModal";
 
-export default function Students() {
+export default function Students({ students, filters }) {
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [gender, setGender] = useState(filters?.gender || "all");
+    const [score_range, setScoreRange] = useState(filters?.score_range || "");
+
+    const handleFilterChange = (key, value) => {
+        if (key === "gender") {
+            setGender(value);
+        } else if (key === "score_range") {
+            setScoreRange(value);
+        }
+
+        const newFilters = { ...filters };
+
+        if (value && value !== "all" && value !== "") {
+            newFilters[key] = value;
+        } else {
+            delete newFilters[key];
+        }
+
+        router.get("/students", newFilters, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ["students", "filters"],
+        });
+    };
+
     return (
         <DashboardLayout>
             <main className="flex-1 overflow-y-auto bg-[#f1f5f9]">
@@ -105,18 +133,33 @@ export default function Students() {
                     {/* Filters + Actions */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-3 flex-wrap">
-                            <select className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400">
-                                <option>All genders</option>
-                                <option>Male</option>
-                                <option>Female</option>
+                            <select
+                                className="text-sm border appearance-none pr-8 border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400"
+                                value={gender}
+                                onChange={(e) =>
+                                    handleFilterChange("gender", e.target.value)
+                                }
+                            >
+                                <option value="all">All genders</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
                             </select>
-                            <select className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400">
-                                <option>All scores</option>
-                                <option>0 – 20</option>
-                                <option>21 – 40</option>
-                                <option>41 – 60</option>
-                                <option>61 – 80</option>
-                                <option>81 – 100</option>
+                            <select
+                                className="text-sm appearance-none pr-8 border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400"
+                                value={score_range}
+                                onChange={(e) =>
+                                    handleFilterChange(
+                                        "score_range",
+                                        e.target.value,
+                                    )
+                                }
+                            >
+                                <option value="">All scores</option>
+                                <option value="0-20">0 – 20</option>
+                                <option value="21-40">21 – 40</option>
+                                <option value="41-60">41 – 60</option>
+                                <option value="61-80">61 – 80</option>
+                                <option value="81-100">81 – 100</option>
                             </select>
                             <button className="text-sm text-slate-500 hover:text-slate-700 px-2 py-1.5 transition">
                                 <i className="fas fa-sliders-h mr-1"></i> More
@@ -128,7 +171,10 @@ export default function Students() {
                                 <i className="fas fa-download mr-1.5"></i>{" "}
                                 Export
                             </button>
-                            <button className="text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 shadow-sm shadow-blue-600/20 transition flex items-center gap-2">
+                            <button
+                                className="text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 shadow-sm shadow-blue-600/20 transition flex items-center gap-2"
+                                onClick={() => setModalOpen(true)}
+                            >
                                 <i className="fas fa-plus"></i> Add Student
                             </button>
                         </div>
@@ -161,186 +207,47 @@ export default function Students() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
-                                    {/* Row 1 */}
-                                    <tr className="table-row-hover transition">
-                                        <td className="px-4 py-3 text-slate-500 font-medium">
-                                            1
-                                        </td>
-                                        <td className="px-4 py-3 font-medium text-slate-800">
-                                            Alfonzo Shanahan
-                                        </td>
-                                        <td className="px-4 py-3 text-slate-500">
-                                            toconnell@example.org
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                                Male
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center w-9 h-7 rounded-md bg-slate-100 text-slate-700 font-semibold text-sm">
-                                                8
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <div className="flex items-center justify-center gap-1.5">
-                                                <button className="p-1.5 text-slate-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition">
-                                                    <i className="fas fa-eye text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition">
-                                                    <i className="fas fa-edit text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50 transition">
-                                                    <i className="fas fa-trash-alt text-xs"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {/* Row 2 */}
-                                    <tr className="table-row-hover transition">
-                                        <td className="px-4 py-3 text-slate-500 font-medium">
-                                            2
-                                        </td>
-                                        <td className="px-4 py-3 font-medium text-slate-800">
-                                            Prof. Jasper Hartmann I
-                                        </td>
-                                        <td className="px-4 py-3 text-slate-500">
-                                            schoolalter.tyler@example.com
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-50 text-pink-700">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
-                                                Female
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center w-9 h-7 rounded-md bg-slate-100 text-slate-700 font-semibold text-sm">
-                                                42
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <div className="flex items-center justify-center gap-1.5">
-                                                <button className="p-1.5 text-slate-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition">
-                                                    <i className="fas fa-eye text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition">
-                                                    <i className="fas fa-edit text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50 transition">
-                                                    <i className="fas fa-trash-alt text-xs"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {/* Row 3 */}
-                                    <tr className="table-row-hover transition">
-                                        <td className="px-4 py-3 text-slate-500 font-medium">
-                                            3
-                                        </td>
-                                        <td className="px-4 py-3 font-medium text-slate-800">
-                                            Iyah Wiza
-                                        </td>
-                                        <td className="px-4 py-3 text-slate-500">
-                                            buckridge.arno@example.com
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-50 text-pink-700">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
-                                                Female
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center w-9 h-7 rounded-md bg-slate-100 text-slate-700 font-semibold text-sm">
-                                                28
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <div className="flex items-center justify-center gap-1.5">
-                                                <button className="p-1.5 text-slate-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition">
-                                                    <i className="fas fa-eye text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition">
-                                                    <i className="fas fa-edit text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50 transition">
-                                                    <i className="fas fa-trash-alt text-xs"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {/* Row 4 */}
-                                    <tr className="table-row-hover transition">
-                                        <td className="px-4 py-3 text-slate-500 font-medium">
-                                            4
-                                        </td>
-                                        <td className="px-4 py-3 font-medium text-slate-800">
-                                            Mr. Jarrod Johnston DDS
-                                        </td>
-                                        <td className="px-4 py-3 text-slate-500">
-                                            alisha.waelchi@example.com
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-50 text-pink-700">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
-                                                Female
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center w-9 h-7 rounded-md bg-emerald-100 text-emerald-700 font-semibold text-sm">
-                                                69
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <div className="flex items-center justify-center gap-1.5">
-                                                <button className="p-1.5 text-slate-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition">
-                                                    <i className="fas fa-eye text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition">
-                                                    <i className="fas fa-edit text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50 transition">
-                                                    <i className="fas fa-trash-alt text-xs"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {/* Row 5 */}
-                                    <tr className="table-row-hover transition">
-                                        <td className="px-4 py-3 text-slate-500 font-medium">
-                                            5
-                                        </td>
-                                        <td className="px-4 py-3 font-medium text-slate-800">
-                                            Nathanael Flatley
-                                        </td>
-                                        <td className="px-4 py-3 text-slate-500">
-                                            concepcion.murazik@example.org
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                                Male
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="inline-flex items-center justify-center w-9 h-7 rounded-md bg-slate-100 text-slate-700 font-semibold text-sm">
-                                                35
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <div className="flex items-center justify-center gap-1.5">
-                                                <button className="p-1.5 text-slate-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition">
-                                                    <i className="fas fa-eye text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition">
-                                                    <i className="fas fa-edit text-xs"></i>
-                                                </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50 transition">
-                                                    <i className="fas fa-trash-alt text-xs"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    {students.data.map((student, index) => (
+                                        <tr className="table-row-hover transition">
+                                            <td className="px-4 py-3 text-slate-500 font-medium">
+                                                {index + 1}
+                                            </td>
+                                            <td className="px-4 py-3 font-medium text-slate-800">
+                                                {student.name}
+                                            </td>
+                                            <td className="px-4 py-3 text-slate-500">
+                                                {student.email}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <span
+                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${student.gender == "male" ? "bg-blue-50 text-blue-700" : "bg-pink-50 text-pink-700"}`}
+                                                >
+                                                    <span
+                                                        className={`w-1.5 h-1.5 rounded-full ${student.gender == "male" ? "bg-blue-500" : "bg-pink-500"}`}
+                                                    ></span>
+                                                    {student.gender}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                <span className="inline-flex items-center justify-center w-9 h-7 rounded-md bg-slate-100 text-slate-700 font-semibold text-sm">
+                                                    {student.score}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 text-center">
+                                                <div className="flex items-center justify-center gap-1.5">
+                                                    <button className="p-1.5 text-slate-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition">
+                                                        <i className="fas fa-eye text-xs"></i>
+                                                    </button>
+                                                    <button className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition">
+                                                        <i className="fas fa-edit text-xs"></i>
+                                                    </button>
+                                                    <button className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50 transition">
+                                                        <i className="fas fa-trash-alt text-xs"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -350,40 +257,78 @@ export default function Students() {
                             <p className="text-sm text-slate-500">
                                 Showing{" "}
                                 <span className="font-medium text-slate-700">
-                                    1
+                                    {students.from}
                                 </span>{" "}
                                 to{" "}
                                 <span className="font-medium text-slate-700">
-                                    10
+                                    {students.to}
                                 </span>{" "}
                                 of{" "}
                                 <span className="font-medium text-slate-700">
-                                    18
+                                    {students.total}
                                 </span>{" "}
                                 results
                             </p>
                             <div className="flex items-center gap-1.5">
-                                <button
-                                    className="px-3 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-500 hover:bg-slate-50 transition disabled:opacity-40 disabled:cursor-not-allowed"
-                                    disabled
+                                {/* Previous Page */}
+                                <Link
+                                    href={students.prev_page_url || "#"}
+                                    className={`px-3 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-500 hover:bg-slate-50 transition ${
+                                        !students.prev_page_url
+                                            ? "opacity-40 cursor-not-allowed"
+                                            : ""
+                                    }`}
+                                    disabled={!students.prev_page_url}
                                 >
                                     <i className="fas fa-chevron-left text-xs"></i>
-                                </button>
-                                <button className="px-3.5 py-1.5 rounded-md bg-blue-600 text-white text-sm font-medium shadow-sm shadow-blue-600/20">
-                                    1
-                                </button>
-                                <button className="px-3.5 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50 transition">
-                                    2
-                                </button>
-                                <button className="px-3.5 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50 transition">
-                                    3
-                                </button>
-                                <button className="px-3 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-500 hover:bg-slate-50 transition">
+                                </Link>
+
+                                {/* Page Numbers */}
+                                {students.links.map((link, index) => {
+                                    // Skip "Previous" and "Next" links
+                                    if (
+                                        link.label === "&laquo; Previous" ||
+                                        link.label === "Next &raquo;"
+                                    ) {
+                                        return null;
+                                    }
+
+                                    return (
+                                        <Link
+                                            key={index}
+                                            href={link.url || "#"}
+                                            className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition ${
+                                                link.active
+                                                    ? "bg-blue-600 text-white shadow-sm shadow-blue-600/20"
+                                                    : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                                            }`}
+                                            dangerouslySetInnerHTML={{
+                                                __html: link.label,
+                                            }}
+                                        />
+                                    );
+                                })}
+
+                                {/* Next Page */}
+                                <Link
+                                    href={students.next_page_url || "#"}
+                                    className={`px-3 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-500 hover:bg-slate-50 transition ${
+                                        !students.next_page_url
+                                            ? "opacity-40 cursor-not-allowed"
+                                            : ""
+                                    }`}
+                                    disabled={!students.next_page_url}
+                                >
                                     <i className="fas fa-chevron-right text-xs"></i>
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
+                    {/* Modal */}
+                    <AddStudentModal
+                        isOpen={isModalOpen}
+                        onClose={() => setModalOpen(false)}
+                    />
                 </div>
             </main>
         </DashboardLayout>

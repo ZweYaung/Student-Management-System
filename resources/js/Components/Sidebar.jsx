@@ -67,6 +67,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     </p>
                 )}
 
+                <a
+                    href="#"
+                    class="sidebar-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white"
+                >
+                    <i class="fas fa-th-large w-5 text-center text-blue-400"></i>
+                    <span>Dashboard</span>
+                </a>
+
                 <Link
                     href={route("students.index")}
                     className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
@@ -106,6 +114,33 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                         </>
                     )}
                 </Link>
+
+                <a
+                    href="#"
+                    class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
+                >
+                    <i class="fas fa-book-open w-5 text-center text-slate-500"></i>
+                    <span>Courses</span>
+                </a>
+                <a
+                    href="#"
+                    class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
+                >
+                    <i class="fas fa-calendar-alt w-5 text-center text-slate-500"></i>
+                    <span>Schedule</span>
+                </a>
+
+                <p class="text-xs uppercase tracking-wider text-slate-500 px-3 mt-6 mb-3 font-semibold">
+                    System
+                </p>
+
+                <a
+                    href="#"
+                    class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
+                >
+                    <i class="fas fa-cog w-5 text-center text-slate-500"></i>
+                    <span>Settings</span>
+                </a>
             </nav>
 
             {/* User Profile */}
