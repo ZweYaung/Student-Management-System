@@ -14,5 +14,16 @@ class Student extends Model
         'email',
         'gender',
         'score',
+        'phone',
+        'date_of_birth',
+        'grade',
+        'section',
+        'address',
+        'guardian_name',
+        'guardian_phone',
+        'guardian_email',
+        'admission_date',
+        'academic_year',
+        'profile_picture',
     ];
 }
