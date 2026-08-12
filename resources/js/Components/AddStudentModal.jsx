@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
 
-const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
+const AddStudentModal = ({
+    isOpen,
+    onClose,
+    onSuccess,
+    mode = "add",
+    studentData = null,
+}) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
@@ -32,26 +38,53 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
             requestAnimationFrame(() => {
                 setIsAnimating(true);
             });
-            // Reset form when opening
-            setFormData({
-                name: "",
-                email: "",
-                gender: "",
-                score: "",
-                phone: "",
-                date_of_birth: "",
-                grade: "",
-                section: "",
-                address: "",
-                guardian_name: "",
-                guardian_phone: "",
-                guardian_email: "",
-                admission_date: "",
-                academic_year: "",
-                profile_picture: null,
-            });
+
+            // If in edit mode and studentData exists, pre-fill the form
+            if (mode === "edit" && studentData) {
+                setFormData({
+                    name: studentData.name || "",
+                    email: studentData.email || "",
+                    gender: studentData.gender || "",
+                    score: studentData.score || "",
+                    phone: studentData.phone || "",
+                    date_of_birth: studentData.date_of_birth || "",
+                    grade: studentData.grade || "",
+                    section: studentData.section || "",
+                    address: studentData.address || "",
+                    guardian_name: studentData.guardian_name || "",
+                    guardian_phone: studentData.guardian_phone || "",
+                    guardian_email: studentData.guardian_email || "",
+                    admission_date: studentData.admission_date || "",
+                    academic_year: studentData.academic_year || "",
+                    profile_picture: null,
+                });
+
+                if (studentData.profile_picture) {
+                    setPreviewImage(studentData.profile_picture);
+                }
+            } else {
+                // Reset form when opening
+                setFormData({
+                    name: "",
+                    email: "",
+                    gender: "",
+                    score: "",
+                    phone: "",
+                    date_of_birth: "",
+                    grade: "",
+                    section: "",
+                    address: "",
+                    guardian_name: "",
+                    guardian_phone: "",
+                    guardian_email: "",
+                    admission_date: "",
+                    academic_year: "",
+                    profile_picture: null,
+                });
+                setPreviewImage(null);
+            }
+
             setErrors({});
-            setPreviewImage(null);
             setLoading(false);
         } else {
             setIsAnimating(false);
@@ -60,7 +93,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
             }, 300);
             return () => clearTimeout(timer);
         }
-    }, [isOpen]);
+    }, [isOpen, mode, studentData]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -120,23 +153,62 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
         // Create FormData for file upload
         const data = new FormData();
         Object.keys(formData).forEach((key) => {
-            if (formData[key] !== null && formData[key] !== "") {
-                data.append(key, formData[key]);
+            const value = formData[key];
+            if (value === null || value === "" || value === undefined) {
+                return;
             }
+
+            if (key === "profile_picture") {
+                if (value instanceof File) {
+                    data.append("profile_picture", value);
+                }
+                return;
+            }
+
+            // if (key === "profile_picture") {
+            //     if (formData.profile_picture instanceof File) {
+            //         data.append("profile_picture", formData.profile_picture);
+            //     }
+            //     return;
+            // }
+
+            data.append(key, value);
         });
 
-        router.post("/students", data, {
-            onSuccess: () => {
-                setLoading(false);
-                onClose();
-                if (onSuccess) onSuccess();
-            },
-            onError: (errors) => {
-                setLoading(false);
-                setErrors(errors);
-                console.error("Validation errors:", errors);
-            },
-        });
+        if (mode === "edit" && studentData) {
+            data.append("_method", "PUT");
+
+            const url =
+                mode === "edit" && studentData
+                    ? `students/${studentData.id}`
+                    : "/students";
+
+            router.post(url, data, {
+                onSuccess: () => {
+                    setLoading(false);
+                    onClose();
+                    if (onSuccess) onSuccess();
+                },
+                onError: (errors) => {
+                    setLoading(false);
+                    setErrors(errors);
+                    console.error("Validation errors:", errors);
+                },
+            });
+        } else {
+            router.post("/students", data, {
+                onSuccess: () => {
+                    setLoading(false);
+                    onClose();
+                    if (onSuccess) onSuccess();
+                },
+                onError: (errors) => {
+                    setLoading(false);
+                    setErrors(errors);
+                    console.error("Validation errors:", errors);
+                },
+            });
+        }
     };
 
     if (!isVisible && !isOpen) return null;
@@ -174,10 +246,14 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
                             </div>
                             <div>
                                 <h2 className="text-lg font-semibold text-slate-800">
-                                    Add New Student
+                                    {mode === "edit"
+                                        ? "Edit Student"
+                                        : "Add New Student"}
                                 </h2>
                                 <p className="text-xs text-slate-500">
-                                    Fill in the details to add a new student
+                                    {mode === "edit"
+                                        ? "Update the student's information below"
+                                        : "Fill in the details to add a new student"}
                                 </p>
                             </div>
                         </div>
@@ -202,9 +278,14 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
                                     <div className="w-24 h-24 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50">
                                         {previewImage ? (
                                             <img
-                                                src={previewImage}
-                                                alt="Profile preview"
-                                                className="w-full h-full object-cover"
+                                                src={
+                                                    previewImage &&
+                                                    previewImage.startsWith(
+                                                        "data:image",
+                                                    )
+                                                        ? previewImage
+                                                        : `profilePictures/${previewImage}`
+                                                }
                                             />
                                         ) : (
                                             <div className="text-center">
@@ -668,12 +749,16 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
                                 {loading ? (
                                     <>
                                         <i className="fas fa-spinner fa-spin"></i>
-                                        Adding...
+                                        {mode === "edit"
+                                            ? "Updating..."
+                                            : "Adding..."}
                                     </>
                                 ) : (
                                     <>
                                         <i className="fas fa-plus"></i>
-                                        Add Student
+                                        {mode === "edit"
+                                            ? "Update Student"
+                                            : "Add Student"}
                                     </>
                                 )}
                             </button>

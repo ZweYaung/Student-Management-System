@@ -15,6 +15,19 @@ export default function Students({ students, filters }) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [studentToDelete, setStudentToDelete] = useState(null);
 
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [studentToEdit, setStudentToEdit] = useState(null);
+
+    const openCreateModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (student) => {
+        setIsEditModalOpen(true);
+        setStudentToEdit(student);
+        console.log("Edit student:", student);
+    };
+
     const handleDeleteStudent = (student) => {
         setIsDeleteModalOpen(true);
         setStudentToDelete(student);
@@ -184,7 +197,8 @@ export default function Students({ students, filters }) {
                             <i className="fas fa-download mr-1.5"></i> Export
                         </button>
                         <button
-                            onClick={() => setIsModalOpen(true)}
+                            // onClick={() => setIsModalOpen(true)}
+                            onClick={openCreateModal}
                             className="text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 shadow-sm shadow-blue-600/20 transition flex items-center gap-2"
                         >
                             <i className="fas fa-plus"></i> Add Student
@@ -261,6 +275,7 @@ export default function Students({ students, filters }) {
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <div className="flex items-center justify-center gap-1.5">
+                                                {/* View student button */}
                                                 <button
                                                     onClick={() =>
                                                         handleViewStudent(
@@ -271,9 +286,18 @@ export default function Students({ students, filters }) {
                                                 >
                                                     <i className="fas fa-eye text-xs"></i>
                                                 </button>
-                                                <button className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition">
+
+                                                {/* Edit student button */}
+                                                <button
+                                                    onClick={() =>
+                                                        openEditModal(student)
+                                                    }
+                                                    className="p-1.5 text-slate-400 hover:text-amber-600 rounded-md hover:bg-amber-50 transition"
+                                                >
                                                     <i className="fas fa-edit text-xs"></i>
                                                 </button>
+
+                                                {/* Delete student button */}
                                                 <button
                                                     onClick={() =>
                                                         handleDeleteStudent(
@@ -374,6 +398,7 @@ export default function Students({ students, filters }) {
                 isOpen={isViewModalOpen}
                 onClose={() => setIsViewModalOpen(false)}
                 student={selectedStudent}
+                openEditModal={openEditModal}
             />
 
             {/* Delete Student Modal */}
@@ -382,6 +407,18 @@ export default function Students({ students, filters }) {
                 onClose={() => setIsDeleteModalOpen(false)}
                 studentId={studentToDelete?.id}
                 studentName={studentToDelete?.name}
+            />
+
+            {/* Edit Student Modal */}
+            <AddStudentModal
+                isOpen={isEditModalOpen}
+                onClose={() => {
+                    setIsEditModalOpen(false);
+                    setStudentToEdit(null);
+                }}
+                onSuccess={handleSuccess}
+                mode="edit"
+                studentData={studentToEdit}
             />
         </DashboardLayout>
     );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const ViewStudentModal = ({ isOpen, onClose, student }) => {
+const ViewStudentModal = ({ isOpen, onClose, student, openEditModal }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
@@ -344,6 +344,7 @@ const ViewStudentModal = ({ isOpen, onClose, student }) => {
                             </button>
                             <button
                                 type="button"
+                                onClick={() => openEditModal(student)}
                                 className="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm shadow-blue-600/20 transition flex items-center gap-2"
                             >
                                 <i className="fas fa-edit"></i>

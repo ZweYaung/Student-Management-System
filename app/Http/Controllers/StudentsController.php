@@ -65,7 +65,6 @@ class StudentsController extends Controller
     }
 
     public function destroy($id){
-        // dd($id);
         $student = Student::findorFail($id);
 
         if(!empty($student->profile_picture)){
@@ -80,10 +79,31 @@ class StudentsController extends Controller
         return redirect()->back()->with('success', 'Student deleted!');
     }
 
-    private function validate($request){
+    public function update(Request $request, $id){
+        $student = Student::findOrFail($id);
+
+        $validated = $this->validate($request, $id);
+
+        if($request->hasFile('profile_picture')){
+            if($student->profile_picture && file_exists(public_path('profilePictures/'.$student->profile_picture))){
+                unlink(public_path('profilePictures/' . $student->profile_picture));
+            }
+
+            $fileName = uniqid().$request->file('profile_picture')->getClientOriginalName();
+            $request->file('profile_picture')->move(public_path()."/profilePictures/",$fileName);
+
+            $validated['profile_picture'] = $fileName;
+        }
+
+        $student->update($validated);
+
+        return redirect()->back()->with('success', 'Student updated successfully!');
+    }
+
+    private function validate($request, $id){
         return $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students,email',
+            'email' => 'required|email|unique:students,email,' .$id,
             'gender' => 'required|in:male,female',
             'score' => 'required|integer|min:0|max:100',
             'phone' => 'nullable|string|max:20|regex:/^[+]?[0-9\s\-()]{7,20}$/',
