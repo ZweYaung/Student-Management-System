@@ -3,11 +3,16 @@ import DashboardLayout from "@/Layouts/DashboardLayout";
 import AddStudentModal from "@/Components/AddStudentModal";
 import ViewStudentModal from "@/Components/ViewStudentModal";
 import DeleteStudentModal from "@/Components/DeleteStudentModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Students({ students, filters }) {
+export default function Students({ students, filters, stats }) {
     const [gender, setGender] = useState(filters?.gender || "all");
+    const [scoreRange, setScoreRange] = useState(filters?.score_range || "");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [search, setSearch] = useState(filters?.search || "");
+    const [debouncedSearch, setDebouncedSearch] = useState(
+        filters?.search || "",
+    );
 
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -17,6 +22,22 @@ export default function Students({ students, filters }) {
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [studentToEdit, setStudentToEdit] = useState(null);
+
+    // Debounce search: wait 300ms after user stops typing
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // When debouncedSearch changes, trigger the filter
+    useEffect(() => {
+        if (debouncedSearch !== filters?.search) {
+            handleFilterChange("search", debouncedSearch);
+        }
+    }, [debouncedSearch]);
 
     const openCreateModal = () => {
         setIsModalOpen(true);
@@ -44,6 +65,14 @@ export default function Students({ students, filters }) {
             setGender(value);
         }
 
+        if (key === "score_range") {
+            setScoreRange(value);
+        }
+
+        if (key === "search") {
+            setSearch(value);
+        }
+
         // Build new filter object
         const newFilters = { ...filters };
         if (value && value !== "all" && value !== "") {
@@ -56,7 +85,7 @@ export default function Students({ students, filters }) {
         router.get("/students", newFilters, {
             preserveState: true,
             preserveScroll: true,
-            only: ["students", "filters"],
+            only: ["students", "filters", "stats"],
         });
     };
 
@@ -66,10 +95,17 @@ export default function Students({ students, filters }) {
     };
 
     return (
-        <DashboardLayout title="Students" subtitle="18 records">
+        <DashboardLayout
+            title="Students"
+            subtitle="18 records"
+            search={search} // Pass search value
+            onSearchChange={(value) => setSearch(value)} // Pass the function
+            // onClearSearch={handleClearSearch} // Pass clear function
+        >
             <div className="space-y-6">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    {/* Total students */}
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover">
                         <div className="flex items-center justify-between">
                             <div>
@@ -77,7 +113,7 @@ export default function Students({ students, filters }) {
                                     Total Students
                                 </p>
                                 <p className="text-2xl font-bold text-slate-800 mt-1">
-                                    18
+                                    {stats.total}
                                 </p>
                             </div>
                             <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-lg">
@@ -85,15 +121,28 @@ export default function Students({ students, filters }) {
                             </div>
                         </div>
                         <div className="mt-3 flex items-center gap-1 text-xs">
-                            <span className="text-emerald-600 font-medium">
-                                <i className="fas fa-arrow-up mr-0.5"></i> +12%
-                            </span>
+                            {stats.percentage_change > 0 ? (
+                                <span className="text-emerald-600 font-medium">
+                                    <i className="fas fa-arrow-up mr-0.5"></i> +
+                                    {stats.percentage_change}%
+                                </span>
+                            ) : stats.percentage_change < 0 ? (
+                                <span className="text-red-600 font-medium">
+                                    <i className="fas fa-arrow-down mr-0.5"></i>{" "}
+                                    {stats.percentage_change}%
+                                </span>
+                            ) : (
+                                <span className="text-slate-400 font-medium">
+                                    <i className="fas fa-minus mr-0.5"></i> 0%
+                                </span>
+                            )}
                             <span className="text-slate-400">
                                 from last month
                             </span>
                         </div>
                     </div>
 
+                    {/* Average Score */}
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover">
                         <div className="flex items-center justify-between">
                             <div>
@@ -101,7 +150,7 @@ export default function Students({ students, filters }) {
                                     Average Score
                                 </p>
                                 <p className="text-2xl font-bold text-slate-800 mt-1">
-                                    43.7
+                                    {stats.average_score}
                                 </p>
                             </div>
                             <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-lg">
@@ -109,9 +158,21 @@ export default function Students({ students, filters }) {
                             </div>
                         </div>
                         <div className="mt-3 flex items-center gap-1 text-xs">
-                            <span className="text-emerald-600 font-medium">
-                                <i className="fas fa-arrow-up mr-0.5"></i> +5.2%
-                            </span>
+                            {stats.avg_percentage_change > 0 ? (
+                                <span className="text-emerald-600 font-medium">
+                                    <i className="fas fa-arrow-up mr-0.5"></i> +
+                                    {stats.avg_percentage_change}%
+                                </span>
+                            ) : stats.avg_percentage_change < 0 ? (
+                                <span className="text-red-600 font-medium">
+                                    <i className="fas fa-arrow-down mr-0.5"></i>{" "}
+                                    {stats.avg_percentage_change}%
+                                </span>
+                            ) : (
+                                <span className="text-slate-400 font-medium">
+                                    <i className="fas fa-minus mr-0.5"></i> 0%
+                                </span>
+                            )}
                             <span className="text-slate-400">
                                 from last month
                             </span>
@@ -125,7 +186,7 @@ export default function Students({ students, filters }) {
                                     Male / Female
                                 </p>
                                 <p className="text-2xl font-bold text-slate-800 mt-1">
-                                    8 / 10
+                                    {stats.male} / {stats.female}
                                 </p>
                             </div>
                             <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center text-lg">
@@ -134,7 +195,18 @@ export default function Students({ students, filters }) {
                         </div>
                         <div className="mt-3 flex items-center gap-1 text-xs">
                             <span className="text-slate-400">
-                                44% male · 56% female
+                                {stats.total > 0
+                                    ? Math.round(
+                                          (stats.male / stats.total) * 100,
+                                      )
+                                    : 0}
+                                % male ·{" "}
+                                {stats.total > 0
+                                    ? Math.round(
+                                          (stats.female / stats.total) * 100,
+                                      )
+                                    : 0}
+                                % female
                             </span>
                         </div>
                     </div>
@@ -146,7 +218,7 @@ export default function Students({ students, filters }) {
                                     Top Score
                                 </p>
                                 <p className="text-2xl font-bold text-slate-800 mt-1">
-                                    86
+                                    {stats.top_score}
                                 </p>
                             </div>
                             <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg">
@@ -155,7 +227,7 @@ export default function Students({ students, filters }) {
                         </div>
                         <div className="mt-3 flex items-center gap-1 text-xs">
                             <span className="text-slate-400">
-                                Edgardo Marquardt
+                                {stats.top_student}
                             </span>
                         </div>
                     </div>
@@ -178,19 +250,23 @@ export default function Students({ students, filters }) {
                         </select>
 
                         {/* Score Filter */}
-                        <select className="text-sm appearance-none pr-8 border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400">
-                            <option>All scores</option>
-                            <option>0 – 20</option>
-                            <option>21 – 40</option>
-                            <option>41 – 60</option>
-                            <option>61 – 80</option>
-                            <option>81 – 100</option>
+                        <select
+                            value={scoreRange}
+                            onChange={(e) =>
+                                handleFilterChange(
+                                    "score_range",
+                                    e.target.value,
+                                )
+                            }
+                            className="text-sm appearance-none pr-8 border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400"
+                        >
+                            <option value="">All scores</option>
+                            <option value="0-20">0 – 20</option>
+                            <option value="21-40">21 – 40</option>
+                            <option value="41-60">41 – 60</option>
+                            <option value="61-80">61 – 80</option>
+                            <option value="81-100">81 – 100</option>
                         </select>
-
-                        <button className="text-sm text-slate-500 hover:text-slate-700 px-2 py-1.5 transition">
-                            <i className="fas fa-sliders-h mr-1"></i> More
-                            filters
-                        </button>
                     </div>
                     <div className="flex items-center gap-2">
                         <button className="text-sm text-slate-500 hover:text-slate-700 border border-slate-200 rounded-lg px-3 py-2 bg-white transition hover:bg-slate-50">

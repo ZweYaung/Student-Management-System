@@ -12,6 +12,7 @@ const AddStudentModal = ({
     const [isAnimating, setIsAnimating] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [imageRemoved, setImageRemoved] = useState(false);
     const [errors, setErrors] = useState({});
 
     const [formData, setFormData] = useState({
@@ -38,6 +39,8 @@ const AddStudentModal = ({
             requestAnimationFrame(() => {
                 setIsAnimating(true);
             });
+
+            setImageRemoved(false);
 
             // If in edit mode and studentData exists, pre-fill the form
             if (mode === "edit" && studentData) {
@@ -110,6 +113,7 @@ const AddStudentModal = ({
     const handleRemoveImage = () => {
         setPreviewImage(null);
         setFormData({ ...formData, profile_picture: null });
+        setImageRemoved(true);
         const fileInput = document.getElementById("profile_image");
         if (fileInput) {
             fileInput.value = "";
@@ -175,12 +179,16 @@ const AddStudentModal = ({
             data.append(key, value);
         });
 
+        if (mode === "edit" && imageRemoved) {
+            data.append("remove_image", "true");
+        }
+
         if (mode === "edit" && studentData) {
             data.append("_method", "PUT");
 
             const url =
                 mode === "edit" && studentData
-                    ? `students/${studentData.id}`
+                    ? `/students/${studentData.id}`
                     : "/students";
 
             router.post(url, data, {

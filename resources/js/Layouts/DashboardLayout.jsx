@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import Sidebar from "@/Components/Sidebar";
 
-export default function DashboardLayout({ children, title, subtitle }) {
+export default function DashboardLayout({
+    children,
+    title,
+    subtitle,
+    search,
+    onSearchChange,
+}) {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -43,11 +49,13 @@ export default function DashboardLayout({ children, title, subtitle }) {
                             <input
                                 type="text"
                                 placeholder="Search students..."
+                                value={search}
+                                onChange={(e) => onSearchChange(e.target.value)}
                                 className="pl-9 pr-4 py-2 rounded-lg border border-slate-200 bg-slate-50/80 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 transition"
                             />
                         </div>
 
-                        {/* 🔔 Notification Bell */}
+                        {/* Notification Bell */}
                         <div className="relative">
                             <button
                                 onClick={toggleNotifications}
@@ -118,7 +126,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
                             )}
                         </div>
 
-                        {/* 👤 User Avatar - Profile Dropdown */}
+                        {/* User Avatar - Profile Dropdown */}
                         <div className="relative">
                             <button
                                 onClick={toggleProfile}
