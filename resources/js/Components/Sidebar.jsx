@@ -53,9 +53,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                             d="M4 6h16M4 12h16M4 18h16"
                         />
                     </svg>
-                    {/* <i
-                        className={`fas ${isCollapsed ? "fa-chevron-right" : "fa-chevron-left"} text-sm`}
-                    ></i> */}
                 </button>
             </div>
 
@@ -69,10 +66,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
                 <a
                     href="#"
-                    className="sidebar-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white"
+                    className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
                 >
-                    <i className="fas fa-th-large w-5 text-center text-blue-400"></i>
-                    <span>Dashboard</span>
+                    <i className="fas fa-th-large w-5 text-center text-slate-500"></i>
+                    {!isCollapsed && (
+                        <span className="whitespace-nowrap">Dashboard</span>
+                    )}
                 </a>
 
                 <Link
@@ -84,14 +83,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     }`}
                     title="Students"
                 >
-                    <i className="fas fa-user-graduate w-5 text-center text-slate-500"></i>
+                    <i
+                        className={`fas fa-user-graduate w-5 text-center ${
+                            isActive("students.index", "Students")
+                                ? "text-blue-400"
+                                : "text-slate-500"
+                        }`}
+                    ></i>
                     {!isCollapsed && (
-                        <>
-                            <span className="whitespace-nowrap">Students</span>
-                            <span className="ml-auto bg-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded-full">
-                                18
-                            </span>
-                        </>
+                        <span className="whitespace-nowrap">Students</span>
                     )}
                 </Link>
 
@@ -104,14 +104,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     }`}
                     title="Teachers"
                 >
-                    <i className="fas fa-chalkboard-teacher w-5 text-center text-slate-500"></i>
+                    <i
+                        className={`fas fa-chalkboard-teacher w-5 text-center ${
+                            isActive("teachers.index", "Teachers")
+                                ? "text-blue-500"
+                                : "text-slate-500"
+                        }`}
+                    ></i>
                     {!isCollapsed && (
-                        <>
-                            <span className="whitespace-nowrap">Teachers</span>
-                            <span className="ml-auto bg-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded-full">
-                                8
-                            </span>
-                        </>
+                        <span className="whitespace-nowrap">Teachers</span>
                     )}
                 </Link>
 
@@ -120,26 +121,35 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
                 >
                     <i className="fas fa-book-open w-5 text-center text-slate-500"></i>
-                    <span>Courses</span>
+                    {!isCollapsed && (
+                        <span className="whitespace-nowrap">Courses</span>
+                    )}
                 </a>
+
                 <a
                     href="#"
                     className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
                 >
                     <i className="fas fa-calendar-alt w-5 text-center text-slate-500"></i>
-                    <span>Schedule</span>
+                    {!isCollapsed && (
+                        <span className="whitespace-nowrap">Schedule</span>
+                    )}
                 </a>
 
-                <p className="text-xs uppercase tracking-wider text-slate-500 px-3 mt-6 mb-3 font-semibold">
-                    System
-                </p>
+                {!isCollapsed && (
+                    <p className="text-xs uppercase tracking-wider text-slate-500 px-3 mt-6 mb-3 font-semibold">
+                        System
+                    </p>
+                )}
 
                 <a
                     href="#"
                     className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
                 >
                     <i className="fas fa-cog w-5 text-center text-slate-500"></i>
-                    <span>Settings</span>
+                    {!isCollapsed && (
+                        <span className="whitespace-nowrap">Settings</span>
+                    )}
                 </a>
             </nav>
 

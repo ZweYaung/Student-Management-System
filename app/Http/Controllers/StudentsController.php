@@ -168,7 +168,7 @@ class StudentsController extends Controller
             'section' => 'nullable|string|max:10',
             'address' => 'nullable|string',
             'guardian_name' => 'nullable|string|max:255',
-            'guardian_phone' => 'nullable|string|max:20|regex:/^[+]?[0-9\s\-()]{7,20}$/',
+            'guardian_phone' => 'nullable|string|max:20|regex:/^[0-9+\s\-()\.]{7,20}$/',
             'guardian_email' => 'nullable|email|max:255',
             'admission_date' => 'nullable|date',
             'academic_year' => 'nullable|string|max:20',

@@ -106,7 +106,7 @@ export default function Students({ students, filters, stats }) {
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {/* Total students */}
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover">
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-slate-500">
@@ -143,7 +143,7 @@ export default function Students({ students, filters, stats }) {
                     </div>
 
                     {/* Average Score */}
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover">
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-slate-500">
@@ -179,7 +179,7 @@ export default function Students({ students, filters, stats }) {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover">
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-slate-500">
@@ -211,7 +211,7 @@ export default function Students({ students, filters, stats }) {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover">
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 card-hover hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-slate-500">
@@ -269,9 +269,6 @@ export default function Students({ students, filters, stats }) {
                         </select>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="text-sm text-slate-500 hover:text-slate-700 border border-slate-200 rounded-lg px-3 py-2 bg-white transition hover:bg-slate-50">
-                            <i className="fas fa-download mr-1.5"></i> Export
-                        </button>
                         <button
                             // onClick={() => setIsModalOpen(true)}
                             onClick={openCreateModal}
