@@ -2,30 +2,28 @@
 
 namespace App\Models;
 
-use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Teacher extends Model
+class Course extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'email',
-        'gender',
+        'code',
+        'description',
+        'credits',
         'department',
-        'experience',
-        'phone',
-        'address',
-        'profile_picture',
-        'bio',
+        'status',
+        'max_students',
+        'current_students',
     ];
 
-    // the courses relationship
-    public function courses()
+    // many-to-many with teachers
+    public function teachers()
     {
-        return $this->belongsToMany(Course::class, 'course_teacher')
+        return $this->belongsToMany(Teacher::class, 'course_teacher')
                     ->withPivot('role')
                     ->withTimestamps();
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TeacherController;
@@ -19,6 +20,23 @@ Route::controller(TeacherController::class)->group(function(){
     Route::post('/teachers','store')->name('teachers.store');
     Route::delete('/teachers/{id}', 'destroy')->name('teachers.destroy');
     Route::put('/teachers/{id}','update')->name('teachers.update');
+});
+
+Route::controller(CourseController::class)->group(function(){
+    Route::get('/courses','index')->name('courses.index');
+    // Route::get('/courses/teachers','getTeachers')->name('courses.teachers');
+    Route::post('/courses','store')->name('courses.store');
+    Route::delete('/courses/{id}', 'destroy')->name('courses.destroy');
+    Route::put('/courses/{id}','update')->name('courses.update');
+});
+
+Route::get('/test-courses', function () {
+    return Inertia::render('Courses/Index', [
+        'courses' => [],
+        'filters' => [],
+        'stats' => [],
+        'teachers' => [],
+    ]);
 });
 
 // Route::inertia('teachers','Teachers/Index')->name('teachers.index');

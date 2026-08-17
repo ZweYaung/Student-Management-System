@@ -116,15 +116,20 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     )}
                 </Link>
 
-                <a
-                    href="#"
-                    className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
+                <Link
+                    href={route("courses.index")}
+                    className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                        isActive("courses.index", "Courses")
+                            ? "bg-slate-700/80 text-white border-l-4 border-blue-500 rounded-l-none pl-2.5"
+                            : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                    }`}
+                    title="Courses"
                 >
                     <i className="fas fa-book-open w-5 text-center text-slate-500"></i>
                     {!isCollapsed && (
                         <span className="whitespace-nowrap">Courses</span>
                     )}
-                </a>
+                </Link>
 
                 <a
                     href="#"
