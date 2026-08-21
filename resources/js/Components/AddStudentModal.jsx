@@ -42,7 +42,6 @@ const AddStudentModal = ({
 
             setImageRemoved(false);
 
-            // If in edit mode and studentData exists, pre-fill the form
             if (mode === "edit" && studentData) {
                 setFormData({
                     name: studentData.name || "",
@@ -168,13 +167,6 @@ const AddStudentModal = ({
                 }
                 return;
             }
-
-            // if (key === "profile_picture") {
-            //     if (formData.profile_picture instanceof File) {
-            //         data.append("profile_picture", formData.profile_picture);
-            //     }
-            //     return;
-            // }
 
             data.append(key, value);
         });

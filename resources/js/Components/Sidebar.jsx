@@ -1,8 +1,14 @@
-import { Link, usePage } from "@inertiajs/react";
+import { Link, usePage, router } from "@inertiajs/react";
 import React from "react";
 import { route } from "ziggy-js";
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+    // Get user from shared data
+    const { auth } = usePage().props;
+    const user = auth?.user;
+
+    console.log("User:", user);
+
     // Get the current component name or URL path from Inertia
     const { component, url } = usePage();
 
@@ -13,6 +19,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
             url.startsWith(route(routeName, {}, false))
         );
     };
+
+    const handleLogout = () => {
+        router.post("/logout");
+    };
+
     return (
         <aside
             className={`bg-slate-800 text-slate-300 flex flex-col h-full transition-all duration-300 ${
@@ -64,15 +75,26 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     </p>
                 )}
 
-                <a
-                    href="#"
-                    className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
+                <Link
+                    href={route("dashboard.index")}
+                    className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                        isActive("dashboard.index", "Dashboard")
+                            ? "bg-slate-700/80 text-white border-l-4 border-blue-500 rounded-l-none pl-2.5"
+                            : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                    }`}
+                    title="Dashboard"
                 >
-                    <i className="fas fa-th-large w-5 text-center text-slate-500"></i>
+                    <i
+                        className={`fas fa-th-large w-5 text-center ${
+                            isActive("dashboard.index", "Dashboard")
+                                ? "text-blue-400"
+                                : "text-slate-500"
+                        }`}
+                    ></i>
                     {!isCollapsed && (
                         <span className="whitespace-nowrap">Dashboard</span>
                     )}
-                </a>
+                </Link>
 
                 <Link
                     href={route("students.index")}
@@ -131,15 +153,20 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     )}
                 </Link>
 
-                <a
-                    href="#"
-                    className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
+                <Link
+                    href={route("schedule.index")}
+                    className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                        isActive("schedule.index", "Schedule")
+                            ? "bg-slate-700/80 text-white border-l-4 border-blue-500 rounded-l-none pl-2.5"
+                            : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                    }`}
+                    title="Schedule"
                 >
-                    <i className="fas fa-calendar-alt w-5 text-center text-slate-500"></i>
+                    <i className="fas fa-book-open w-5 text-center text-slate-500"></i>
                     {!isCollapsed && (
                         <span className="whitespace-nowrap">Schedule</span>
                     )}
-                </a>
+                </Link>
 
                 {!isCollapsed && (
                     <p className="text-xs uppercase tracking-wider text-slate-500 px-3 mt-6 mb-3 font-semibold">
@@ -147,33 +174,41 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     </p>
                 )}
 
-                <a
-                    href="#"
-                    className="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white"
+                <Link
+                    href={route("profile.index")}
+                    className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+                        isActive("profile.index", "Profile")
+                            ? "bg-slate-700/80 text-white border-l-4 border-blue-500 rounded-l-none pl-2.5"
+                            : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                    }`}
                 >
-                    <i className="fas fa-cog w-5 text-center text-slate-500"></i>
+                    <i className="fas fa-user text-slate-500"></i>
                     {!isCollapsed && (
-                        <span className="whitespace-nowrap">Settings</span>
+                        <span className="whitespace-nowrap">Profile</span>
                     )}
-                </a>
+                </Link>
             </nav>
 
             {/* User Profile */}
             <div className="border-t border-slate-700/60 px-4 py-4 flex items-center gap-3">
                 <div className="w-9 h-9 min-w-[36px] rounded-full bg-slate-700 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-slate-600">
-                    JD
+                    {user?.name?.charAt(0).toUpperCase()}
                 </div>
                 {!isCollapsed && (
                     <>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-white truncate">
-                                John Doe
+                                {user?.name}
                             </p>
                             <p className="text-xs text-slate-400 truncate">
-                                admin@academy.com
+                                {user?.email}
                             </p>
                         </div>
-                        <button className="text-slate-400 hover:text-white transition">
+                        <button
+                            type="button"
+                            onClick={() => handleLogout()}
+                            className="text-slate-400 hover:text-white transition"
+                        >
                             <i className="fas fa-sign-out-alt text-sm"></i>
                         </button>
                     </>

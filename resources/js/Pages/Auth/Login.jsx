@@ -1,100 +1,128 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
         remember: false,
     });
 
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('login'), {
-            onFinish: () => reset('password'),
+        post(route("login"), {
+            onFinish: () => reset("password"),
         });
     };
 
     return (
-        <GuestLayout>
+        <>
             <Head title="Log in" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
-
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] py-12 px-4">
+                {/* Logo */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#1e293b] text-white text-xl font-bold mb-3">
+                        <i className="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1 className="text-xl font-semibold text-[#0f172a] tracking-tight">
+                        Academy<span className="text-[#3b82f6]">Hub</span>
+                    </h1>
+                    <p className="text-sm text-[#94a3b8] mt-1">
+                        Sign in to your account
+                    </p>
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                        >
-                            Forgot your password?
-                        </Link>
+                {/* Card */}
+                <div className="w-full max-w-[440px] bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-[#eef2f6] p-8">
+                    {status && (
+                        <div className="mb-4 text-sm font-medium text-green-600">
+                            {status}
+                        </div>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                    <form onSubmit={submit}>
+                        {/* Email */}
+                        <div className="mb-4">
+                            <label
+                                htmlFor="email"
+                                className="block text-xs font-medium text-[#475569] mb-1.5"
+                            >
+                                Email
+                            </label>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={data.email}
+                                className="w-full bg-[#f8fafc] border border-[#e2e8f0] text-[#0f172a] text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:bg-white focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition placeholder:text-[#94a3b8]"
+                                placeholder="you@example.com"
+                                autoComplete="username"
+                                autoFocus
+                                onChange={(e) =>
+                                    setData("email", e.target.value)
+                                }
+                            />
+                            {errors.email && (
+                                <p className="mt-2 text-sm text-red-500">
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Password */}
+                        <div className="mb-4">
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label
+                                    htmlFor="password"
+                                    className="block text-xs font-medium text-[#475569]"
+                                >
+                                    Password
+                                </label>
+                            </div>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                className="w-full bg-[#f8fafc] border border-[#e2e8f0] text-[#0f172a] text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:bg-white focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition placeholder:text-[#94a3b8]"
+                                placeholder="••••••••"
+                                autoComplete="current-password"
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
+                            />
+                            {errors.password && (
+                                <p className="mt-2 text-sm text-red-500">
+                                    {errors.password}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full bg-[#1e293b] hover:bg-[#0f172a] text-white font-medium py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Sign In
+                        </button>
+                    </form>
+
+                    <p className="text-center text-sm text-[#64748b] mt-6">
+                        Don't have an account?
+                        <Link
+                            href={route("register")}
+                            className="text-[#1e293b] font-medium hover:text-[#3b82f6] transition ml-1"
+                        >
+                            Create one
+                        </Link>
+                    </p>
                 </div>
-            </form>
-        </GuestLayout>
+
+                <p className="text-center text-xs text-[#94a3b8] mt-6">
+                    © 2026 AcademyHub
+                </p>
+            </div>
+        </>
     );
 }

@@ -385,7 +385,6 @@ export default function Courses({ courses, filters, stats, teachers }) {
                             results
                         </p>
                         <div className="flex items-center gap-1.5">
-                            {/* Previous Page - Added preserveState, preserveScroll, only */}
                             <Link
                                 href={courses.prev_page_url || "#"}
                                 className={`px-3 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-500 hover:bg-slate-50 transition ${!courses.prev_page_url ? "opacity-40 cursor-not-allowed" : ""}`}
@@ -402,7 +401,6 @@ export default function Courses({ courses, filters, stats, teachers }) {
                                 <i className="fas fa-chevron-left text-xs"></i>
                             </Link>
 
-                            {/* Page Numbers - Added preserveState, preserveScroll, only */}
                             {courses.links.map((link, index) => {
                                 if (
                                     link.label === "&laquo; Previous" ||
@@ -429,7 +427,6 @@ export default function Courses({ courses, filters, stats, teachers }) {
                                 );
                             })}
 
-                            {/* Next Page - Added preserveState, preserveScroll, only */}
                             <Link
                                 href={courses.next_page_url || "#"}
                                 className={`px-3 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-500 hover:bg-slate-50 transition ${!courses.next_page_url ? "opacity-40 cursor-not-allowed" : ""}`}

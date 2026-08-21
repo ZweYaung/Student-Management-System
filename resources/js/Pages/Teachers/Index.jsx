@@ -1,4 +1,3 @@
-// resources/js/Pages/Teachers/Index.jsx
 import { Link, router } from "@inertiajs/react";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import AddTeacherModal from "@/Components/AddTeacherModal";

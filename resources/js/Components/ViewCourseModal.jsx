@@ -1,4 +1,3 @@
-// resources/js/Components/ViewCourseModal.jsx
 import React, { useEffect, useState } from "react";
 
 const ViewCourseModal = ({ isOpen, onClose, course, openEditModal }) => {

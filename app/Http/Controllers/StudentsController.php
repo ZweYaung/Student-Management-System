@@ -96,7 +96,24 @@ class StudentsController extends Controller
     // Create new student
     public function store(Request $request)
     {
-        $validated = $this->validate($request);
+        // Use $request->validate() directly
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:students,email',
+            'gender' => 'required|in:male,female',
+            'score' => 'required|integer|min:0|max:100',
+            'phone' => 'nullable|string|max:20|regex:/^[+]?[0-9\s\-()]{7,20}$/',
+            'date_of_birth' => 'nullable|date|before:today',
+            'grade' => 'nullable|string|max:50',
+            'section' => 'nullable|string|max:10',
+            'address' => 'nullable|string',
+            'guardian_name' => 'nullable|string|max:255',
+            'guardian_phone' => 'nullable|string|max:20|regex:/^[0-9+\s\-()\.]{7,20}$/',
+            'guardian_email' => 'nullable|email|max:255',
+            'admission_date' => 'nullable|date',
+            'academic_year' => 'nullable|string|max:20',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
         if($request->hasFile('profile_picture')){
             $fileName = uniqid().$request->file('profile_picture')->getClientOriginalName();
@@ -111,7 +128,7 @@ class StudentsController extends Controller
         return redirect()->back()->with('success', 'Student added successfully!');
     }
 
-    // Delete sutdent
+    // Delete student
     public function destroy($id){
         $student = Student::findorFail($id);
 
@@ -124,14 +141,30 @@ class StudentsController extends Controller
 
         $student->delete();
 
-        return redirect()->back()->with('success', 'Student deleted!');
+        return redirect()->back()->with('success', 'Student deleted successfully!');
     }
 
     // Update student
     public function update(Request $request, $id){
         $student = Student::findOrFail($id);
 
-        $validated = $this->validate($request, $id);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:students,email,' . $id,
+            'gender' => 'required|in:male,female',
+            'score' => 'required|integer|min:0|max:100',
+            'phone' => 'nullable|string|max:20|regex:/^[+]?[0-9\s\-()]{7,20}$/',
+            'date_of_birth' => 'nullable|date|before:today',
+            'grade' => 'nullable|string|max:50',
+            'section' => 'nullable|string|max:10',
+            'address' => 'nullable|string',
+            'guardian_name' => 'nullable|string|max:255',
+            'guardian_phone' => 'nullable|string|max:20|regex:/^[0-9+\s\-()\.]{7,20}$/',
+            'guardian_email' => 'nullable|email|max:255',
+            'admission_date' => 'nullable|date',
+            'academic_year' => 'nullable|string|max:20',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
         if($request->input('remove_image') === 'true'){
             if($student->profile_picture && file_exists(public_path('profilePictures/'.$student->profile_picture))){
@@ -154,25 +187,5 @@ class StudentsController extends Controller
         $student->update($validated);
 
         return redirect()->back()->with('success', 'Student updated successfully!');
-    }
-
-    private function validate($request, $id){
-        return $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students,email,' .$id,
-            'gender' => 'required|in:male,female',
-            'score' => 'required|integer|min:0|max:100',
-            'phone' => 'nullable|string|max:20|regex:/^[+]?[0-9\s\-()]{7,20}$/',
-            'date_of_birth' => 'nullable|date|before:today',
-            'grade' => 'nullable|string|max:50',
-            'section' => 'nullable|string|max:10',
-            'address' => 'nullable|string',
-            'guardian_name' => 'nullable|string|max:255',
-            'guardian_phone' => 'nullable|string|max:20|regex:/^[0-9+\s\-()\.]{7,20}$/',
-            'guardian_email' => 'nullable|email|max:255',
-            'admission_date' => 'nullable|date',
-            'academic_year' => 'nullable|string|max:20',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
     }
 }

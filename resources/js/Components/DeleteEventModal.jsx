@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
 
-const DeleteCourseModal = ({ isOpen, onClose, courseName, courseId }) => {
+const DeleteEventModal = ({
+    isOpen,
+    onClose,
+    onSuccess,
+    eventId,
+    eventTitle,
+}) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
-
-    const confirmDelete = () => {
-        router.delete(`/courses/${courseId}`, {
-            preserveScroll: true,
-            onSuccess: () => {
-                onClose();
-            },
-        });
-    };
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -29,6 +27,20 @@ const DeleteCourseModal = ({ isOpen, onClose, courseName, courseId }) => {
         }
     }, [isOpen]);
 
+    const handleConfirm = () => {
+        setLoading(true);
+        router.delete(`/schedule/${eventId}`, {
+            onSuccess: () => {
+                setLoading(false);
+                onClose();
+                if (onSuccess) onSuccess();
+            },
+            onError: () => {
+                setLoading(false);
+            },
+        });
+    };
+
     if (!isVisible && !isOpen) return null;
 
     return (
@@ -37,7 +49,6 @@ const DeleteCourseModal = ({ isOpen, onClose, courseName, courseId }) => {
                 isAnimating ? "opacity-100" : "opacity-0"
             }`}
         >
-            {/* Backdrop */}
             <div
                 className={`fixed inset-0 transition-all duration-300 ${
                     isAnimating ? "bg-black/50 backdrop-blur-sm" : "bg-black/0"
@@ -54,43 +65,50 @@ const DeleteCourseModal = ({ isOpen, onClose, courseName, courseId }) => {
                     }`}
                 >
                     <div className="p-6">
-                        {/* Icon */}
                         <div className="flex items-center justify-center mb-4">
                             <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
                                 <i className="fas fa-trash-alt text-2xl text-red-600"></i>
                             </div>
                         </div>
 
-                        {/* Title */}
                         <h3 className="text-lg font-semibold text-slate-800 text-center mb-2">
-                            Delete Course
+                            Delete Event
                         </h3>
 
-                        {/* Message */}
                         <p className="text-sm text-slate-500 text-center mb-6">
                             Are you sure you want to delete{" "}
                             <span className="font-semibold text-slate-800">
-                                {courseName || "this course"}
+                                "{eventTitle || "this event"}"
                             </span>
                             ? This action cannot be undone.
                         </p>
 
-                        {/* Action Buttons */}
                         <div className="flex items-center justify-end gap-3">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition"
+                                disabled={loading}
+                                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition disabled:opacity-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="button"
-                                onClick={confirmDelete}
-                                className="px-6 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm shadow-red-600/20 transition flex items-center gap-2"
+                                onClick={handleConfirm}
+                                disabled={loading}
+                                className="px-6 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm shadow-red-600/20 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <i className="fas fa-trash-alt"></i>
-                                Delete
+                                {loading ? (
+                                    <>
+                                        <i className="fas fa-spinner fa-spin"></i>
+                                        Deleting...
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="fas fa-trash-alt"></i>
+                                        Delete
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>
@@ -100,4 +118,4 @@ const DeleteCourseModal = ({ isOpen, onClose, courseName, courseId }) => {
     );
 };
 
-export default DeleteCourseModal;
+export default DeleteEventModal;

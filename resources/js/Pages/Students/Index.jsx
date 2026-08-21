@@ -23,7 +23,7 @@ export default function Students({ students, filters, stats }) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [studentToEdit, setStudentToEdit] = useState(null);
 
-    // Debounce search: wait 300ms after user stops typing
+    // Debounce search - wait 300ms after user stops typing
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
@@ -97,10 +97,9 @@ export default function Students({ students, filters, stats }) {
     return (
         <DashboardLayout
             title="Students"
-            subtitle="18 records"
+            subtitle={`${stats.total || 0} records`}
             search={search} // Pass search value
             onSearchChange={(value) => setSearch(value)} // Pass the function
-            // onClearSearch={handleClearSearch} // Pass clear function
         >
             <div className="space-y-6">
                 {/* Stats Cards */}
@@ -270,7 +269,6 @@ export default function Students({ students, filters, stats }) {
                     </div>
                     <div className="flex items-center gap-2">
                         <button
-                            // onClick={() => setIsModalOpen(true)}
                             onClick={openCreateModal}
                             className="text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 shadow-sm shadow-blue-600/20 transition flex items-center gap-2"
                         >
